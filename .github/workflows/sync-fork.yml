@@ -1,0 +1,21 @@
+name: Sync fork with upstream
+on:
+  schedule:
+    - cron: '0 */2 * * *'   # 每 2 小时同步一次
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fast-forward to upstream
+        run: |
+          git remote add upstream https://github.com/aliyun/alibabacloud-landing-zone.git
+          git fetch upstream
+          git merge --ff-only upstream/master
+          git push origin master
