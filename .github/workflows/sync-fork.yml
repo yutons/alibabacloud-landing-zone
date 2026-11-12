@@ -13,9 +13,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fast-forward to upstream
+
+      - name: Merge upstream
         run: |
           git remote add upstream https://github.com/aliyun/alibabacloud-landing-zone.git
-          git fetch upstream
-          git merge --ff-only upstream/master
+          git fetch upstream --prune --tags
+          git merge --no-edit upstream/master
           git push origin master
+
+      - name: Mirror upstream to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          GIT_TERMINAL_PROMPT: '0'
+        run: |
+          git remote add gitee "https://yutons:${GITEE_TOKEN}@gitee.com/newcapec_nc/alibabacloud-landing-zone.git"
+          git push --prune gitee '+refs/remotes/upstream/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
