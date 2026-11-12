@@ -14,17 +14,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Merge upstream
+      - name: Merge upstream master
         run: |
           git remote add upstream https://github.com/aliyun/alibabacloud-landing-zone.git
-          git fetch upstream --prune --tags
+          git fetch upstream '+refs/heads/master:refs/remotes/upstream/master'
           git merge --no-edit upstream/master
           git push origin master
 
-      - name: Mirror upstream to Gitee
+      - name: Mirror master to Gitee
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
           GIT_TERMINAL_PROMPT: '0'
         run: |
           git remote add gitee "https://yutons:${GITEE_TOKEN}@gitee.com/newcapec_nc/alibabacloud-landing-zone.git"
-          git push --prune gitee '+refs/remotes/upstream/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+          git push gitee '+refs/heads/master:refs/heads/master'
